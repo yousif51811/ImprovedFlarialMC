@@ -26,6 +26,8 @@ dotnet publish -c Release
 ```
 #### 4. An exe will be available at `\bin\Release\net10.0-windows\publish`
 
-
+> [!WARNING]
+> **Windows Defender could flag the downloaded Flarial DLL/Launcher after download**
+> You might want to add the folder to your exclusion list in windows defender.
 --------------
 Made with ❤️ by yousif51811
