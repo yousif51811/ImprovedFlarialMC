@@ -55,11 +55,13 @@ namespace Flarial
                 LaunchBtn.IsEnabled = false;
                 LaunchContent.Text = "Updating";
                 LaunchIcon.Text = " ";
-                if (!await ClientHandler.CheckForUpdates())
+                bool? update = await ClientHandler.CheckForUpdates();
+                if (update == false)
                 {
                     FailedLaunch();
                     return;
                 }
+
                 LaunchContent.Text = "Starting";
                 LaunchIcon.Text = " ";
                 if (!await ClientHandler.StartGame())

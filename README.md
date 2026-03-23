@@ -25,7 +25,5 @@ git clone https://github.com/yousif51811/FlarialReskin.git
 dotnet publish -c Release
 ```
 #### 4. An exe will be available at `\bin\Release\net10.0-windows\publish`
-
-
 --------------
 Made with ❤️ by yousif51811

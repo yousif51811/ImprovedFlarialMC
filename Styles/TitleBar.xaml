@@ -40,10 +40,10 @@
     <Style TargetType="Label" x:Key="Heading">
         <Setter Property="Foreground" Value="White"/>
         <Setter Property="FontSize" Value="18"/>
+        <Setter Property="FontFamily" Value="{DynamicResource MainFont}"/>
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="FontWeight" Value="DemiBold"/>
         <Setter Property="FontStretch" Value="Expanded"/>
-        <Setter Property="FontFamily" Value="Comic Sans MS"/>
     </Style>
 </ResourceDictionary>

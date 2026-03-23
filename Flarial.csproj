@@ -6,17 +6,25 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
-	<FileVersion>v0.2.0-alpha</FileVersion>
+	<FileVersion>v0.2.1-alpha</FileVersion>
 	  <ApplicationIcon>Assets\Images\logo.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\Images\Background-1.png" />
+    <None Remove="Assets\Images\Background-2.jpg" />
     <None Remove="Assets\Images\background.png" />
     <None Remove="Assets\Images\logo.png" />
     <None Remove="Assets\Images\Social\github.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\Images\Background-1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Images\Background-2.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\Images\background.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>

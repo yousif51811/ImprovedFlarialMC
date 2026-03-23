@@ -8,69 +8,77 @@
              d:DesignHeight="250" d:DesignWidth="375">
     <Grid Margin="10">
         <StackPanel Orientation="Vertical">
-            <StackPanel Orientation="Horizontal" Margin="8,8,0,8">
-                <Label Content="DLL Source:" 
-                       Style="{DynamicResource Heading}"
-                       FontSize="12"/>
-                <ComboBox x:Name="SelectDLLCombo"
-                          HorizontalAlignment="Left" 
-                          VerticalAlignment="Center" 
-                          Width="80"
-                          FontFamily="Comic Sans MS"
-                          SelectionChanged="SelectDLLCombo_Selected"
-                          Style="{DynamicResource Combo}">
-                    <ComboBoxItem Content="Default" 
-                                  Style="{DynamicResource item}"
-                                  x:Name="DefaultO"/>
-                    <ComboBoxItem Content="Custom" 
-                                  Style="{DynamicResource item}"
-                                  x:Name="CustomO"/>
-                </ComboBox>
-                <TextBox Style="{DynamicResource TextBox}"
-                         x:Name="CustomDLLPath" 
-                         Margin="10,0,0,0" 
-                         VerticalAlignment="Center" 
-                         Width="120"
-                         TextChanged="CustomDLLPath_TextChanged"/>
-                <Button Style="{DynamicResource Button}" 
-                        x:Name="Browse"
-                        Content="" 
-                        Margin="5,0,0,0" 
-                        VerticalAlignment="Center" 
-                        Click="Browse_Click"
-                        Width="20"
-                        Height="20"/>
+            <StackPanel Orientation="Vertical">
+                <StackPanel Orientation="Horizontal" Margin="8,8,0,8">
+                    <Label Content="DLL Source:" 
+                           Style="{DynamicResource Heading}"
+                           FontSize="12"/>
+                    <ComboBox x:Name="SelectDLLCombo"
+                              HorizontalAlignment="Left" 
+                              VerticalAlignment="Center" 
+                              Width="80"
+                              SelectionChanged="SelectDLLCombo_Selected"
+                              Style="{DynamicResource Combo}">
+                        <ComboBoxItem Content="Default" 
+                                      Style="{DynamicResource item}"
+                                      x:Name="DefaultO"/>
+                        <ComboBoxItem Content="Custom" 
+                                      Style="{DynamicResource item}"
+                                      x:Name="CustomO"/>
+                    </ComboBox>
+                
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBox Style="{DynamicResource TextBox}"
+                                 x:Name="CustomDLLPath" 
+                                 Margin="10,0,0,0" 
+                                 VerticalAlignment="Center" 
+                                 Width="300"
+                                 TextChanged="CustomDLLPath_TextChanged"/>
+                    <Button Style="{DynamicResource Button}" 
+                                x:Name="Browse"
+                                Content="" 
+                                Margin="5,0,0,0" 
+                                VerticalAlignment="Center" 
+                                Click="Browse_Click"
+                                Width="20"
+                                Height="20"/>
+                </StackPanel>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="8,8,0,8">
-                <Label Content="Launcher Source:" 
-                       Style="{DynamicResource Heading}"
-                       FontSize="12"/>
-                <ComboBox x:Name="SelectLauncherCombo"
-                          HorizontalAlignment="Left" 
-                          VerticalAlignment="Center" 
-                          Width="80"
-                          FontFamily="Comic Sans MS"
-                          SelectionChanged="SelectLauncherCombo_SelectionChanged"
-                          Style="{DynamicResource Combo}">
-                    <ComboBoxItem Content="Default" 
-                                  Style="{DynamicResource item}"/>
-                    <ComboBoxItem Content="Custom" 
-                                  Style="{DynamicResource item}"/>
-                </ComboBox>
-                <TextBox Style="{DynamicResource TextBox}"
-                         x:Name="CustomLauncherPath" 
-                         Margin="10,0,0,0" 
-                         VerticalAlignment="Center" 
-                         Width="90"
-                         TextChanged="CustomLauncherPath_TextChanged"/>
-                <Button Style="{DynamicResource Button}" 
-                        x:Name="BrowseLauncher"
-                        Content="" 
-                        Margin="5,0,0,0" 
-                        VerticalAlignment="Center" 
-                        Click="BrowseLauncher_Click"
-                        Width="20"
-                        Height="20"/>
+            <StackPanel Orientation="Vertical">
+                <StackPanel Orientation="Horizontal" Margin="8,8,0,8">
+                    <Label Content="Launcher Source:" 
+                           Style="{DynamicResource Heading}"
+                           FontSize="12"/>
+                    <ComboBox x:Name="SelectLauncherCombo"
+                              HorizontalAlignment="Left" 
+                              VerticalAlignment="Center" 
+                              Width="80"
+                              SelectionChanged="SelectLauncherCombo_SelectionChanged"
+                              Style="{DynamicResource Combo}">
+                        <ComboBoxItem Content="Default" 
+                                      Style="{DynamicResource item}"/>
+                        <ComboBoxItem Content="Custom" 
+                                      Style="{DynamicResource item}"/>
+                    </ComboBox>
+
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBox Style="{DynamicResource TextBox}"
+                             x:Name="CustomLauncherPath" 
+                             Margin="10,0,0,0" 
+                             VerticalAlignment="Center" 
+                             Width="300"
+                             TextChanged="CustomLauncherPath_TextChanged"/>
+                    <Button Style="{DynamicResource Button}" 
+                            x:Name="BrowseLauncher"
+                            Content="" 
+                            Margin="5,0,0,0" 
+                            VerticalAlignment="Center" 
+                            Click="BrowseLauncher_Click"
+                            Width="20"
+                            Height="20"/>
+                </StackPanel>
             </StackPanel>
         </StackPanel>
     </Grid>

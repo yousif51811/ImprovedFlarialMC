@@ -128,7 +128,7 @@
                        Foreground="#80FFFFFF"
                        FontSize="10"
                        Opacity="0.7"
-                       FontFamily="Comic Sans MS"
+                       FontFamily="{DynamicResource MainFont}"
                        IsHitTestVisible="False"/>
         </Grid>
         <!-- Options border -->

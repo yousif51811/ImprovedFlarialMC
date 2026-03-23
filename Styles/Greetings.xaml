@@ -3,13 +3,13 @@
     <Style TargetType="Run" x:Key="MainGreeting">
         <Setter Property="Foreground" Value="White"/>
         <Setter Property="FontSize" Value="24"/>
-        <Setter Property="FontFamily" Value="Comic Sans MS"/>
+        <Setter Property="FontFamily" Value="{DynamicResource MainFont}"/>
         <Setter Property="BaselineAlignment" Value="Center"/>
     </Style>
     <Style TargetType="Run" x:Key="SecondaryGreeting">
         <Setter Property="Foreground" Value="#80FFFFFF"/>
         <Setter Property="FontSize" Value="14"/>
-        <Setter Property="FontFamily" Value="Comic Sans MS"/>
+        <Setter Property="FontFamily" Value="{DynamicResource MainFont}"/>
         <Setter Property="BaselineAlignment" Value="Center"/>
     </Style>
 </ResourceDictionary>

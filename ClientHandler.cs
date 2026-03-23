@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using System.Security.Cryptography;
@@ -14,7 +15,6 @@ namespace Flarial
     /// </summary>
     static class ClientHandler
     {
-        private static readonly HttpClient client = new HttpClient();
         private const string LauncherURL = "https://cdn.flarial.xyz/launcher/Flarial.Launcher.exe";
         public const string LauncherPath = "./Assets/DLL/Launcher.exe";
         private const string LauncherVersion = "https://cdn.flarial.xyz/launcher/launcherVersion.txt";
@@ -28,34 +28,43 @@ namespace Flarial
         /// </summary>
         private static async Task<bool> DownloadLauncher()
         {
-                try
+            // Create an HTTPclient (we will later dispose of it)
+            HttpClient client = new HttpClient();
+            try
+            {
+                // Delete existing launcher if it exists
+                if (File.Exists(LauncherPath))
                 {
-                    // Delete existing launcher if it exists
-                    if (File.Exists(LauncherPath))
-                    {
-                        File.Delete(LauncherPath);
-                    }
-                    // Ensure directory exists
-                    string directory = System.IO.Path.GetDirectoryName(LauncherPath)!;
-                    if (!Directory.Exists(directory))
-                        Directory.CreateDirectory(directory);
-
-                    using (client)
-                    {
-                        var response = await client.GetAsync(LauncherURL);
-                        response.EnsureSuccessStatusCode();
-
-                        using (var fs = new FileStream(LauncherPath, FileMode.Create))
-                        {
-                            await response.Content.CopyToAsync(fs);
-                        }
-                    }
+                    File.Delete(LauncherPath);
                 }
-                catch
+                // Ensure directory exists
+                string directory = System.IO.Path.GetDirectoryName(LauncherPath)!;
+                if (!Directory.Exists(directory))
+                    Directory.CreateDirectory(directory);
+
+                var response = await client.GetAsync(LauncherURL);
+                response.EnsureSuccessStatusCode();
+
+                using (var fs = new FileStream(LauncherPath, FileMode.Create))
                 {
+                    await response.Content.CopyToAsync(fs);
+                }
+                // Check again if it exists, if not ask for exclusion
+                if (!File.Exists(LauncherPath))
+                {
+                    RequestExclude();
                     return false;
                 }
-            return false;
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+            finally
+            {
+                client.Dispose();
+            }
         }
             
 
@@ -66,31 +75,40 @@ namespace Flarial
         /// </summary>
         private static async Task<bool> DownloadDLL()
         {
-                try
+            // Create an HTTPclient (we will later dispose of it)
+            HttpClient client = new HttpClient();
+            try
+            {
+                // Delete existing DLL if it exists
+                if (File.Exists(DLLPath))
                 {
-                    // Delete existing DLL if it exists
-                    if (File.Exists(DLLPath))
-                    {
-                        File.Delete(DLLPath);
-                    }
-                    // Ensure directory exists
-                    string directory = System.IO.Path.GetDirectoryName(DLLPath)!;
-                    if (!Directory.Exists(directory))
-                        Directory.CreateDirectory(directory);
-
-                    using (HttpClient client = new HttpClient())
-                    {
-                        var response = await client.GetAsync(DLLURL);
-                        response.EnsureSuccessStatusCode();
-
-                        using (var fs = new FileStream(DLLPath, FileMode.Create))
-                        {
-                            await response.Content.CopyToAsync(fs);
-                            return true;
-                        }
+                    File.Delete(DLLPath);
                 }
+                // Ensure directory exists
+                string directory = System.IO.Path.GetDirectoryName(DLLPath)!;
+                if (!Directory.Exists(directory))
+                    Directory.CreateDirectory(directory);
+
+                var response = await client.GetAsync(DLLURL);
+                response.EnsureSuccessStatusCode();
+
+                using (var fs = new FileStream(DLLPath, FileMode.Create))
+                {
+                    await response.Content.CopyToAsync(fs);
+                }
+                // Check again if it exists, if not ask for exclusion
+                if (!File.Exists(DLLPath))
+                {
+                    RequestExclude();
+                    return false;
+                }
+                return true;
             }
-                catch {  return false; }
+            catch {  return false; }
+            finally
+            {
+                client.Dispose();
+            }
         }
 
 
@@ -99,6 +117,8 @@ namespace Flarial
         /// </summary>
         public static async Task<bool> CheckForUpdates()
         {
+            // Create an HTTPclient (we will later dispose of it)
+            HttpClient client = new HttpClient();
             /*
              * Start by getting the launcher version from the flarial
              * CDN and checking if it matches the local version.
@@ -119,7 +139,10 @@ namespace Flarial
                 {
                     bool success = await DownloadLauncher();
                     return success;
+                    
                 }
+                // The file exists, Now we check the version of the local launcher against the version on the CDN
+                // In order to make sure its on the latest version, if not, we download the new version.
                 string json = await client.GetStringAsync(LauncherVersion);
                 using JsonDocument doc = JsonDocument.Parse(json);
                 string? version = doc.RootElement.GetProperty("version").GetString();
@@ -157,6 +180,7 @@ namespace Flarial
                 string json = await client.GetStringAsync(DLLHASHES);
                 using JsonDocument doc = JsonDocument.Parse(json);
                 string? hash = doc.RootElement.GetProperty("Release").GetString();
+
                 if (await GetLocalHashAsync() != hash)
                 {
                     bool success = await DownloadDLL();
@@ -164,6 +188,10 @@ namespace Flarial
                 }
             }
             catch { return false; }
+            finally
+            {
+                client.Dispose();
+            }
             return false;
         }
 
@@ -234,5 +262,55 @@ namespace Flarial
                 return false;
             }
         }
+
+
+        /// <summary>
+        /// Manages the current folder in Windows Defender exclusions.
+        /// Requires for administrator permissions.
+        /// </summary>
+        /// <param name="isAdding">True to add exclusion, False to remove it.</param>
+        static void ManageFolderExclusion(bool isAdding)
+        {
+            string currentDir = AppDomain.CurrentDomain.BaseDirectory;
+
+            // Toggle between Add and Remove
+            string action = isAdding ? "Add" : "Remove";
+            string psCommand = $"{action}-MpPreference -ExclusionPath '{currentDir}'";
+
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                FileName = "powershell.exe",
+                Arguments = $"-NoProfile -WindowStyle Hidden -Command \"{psCommand}\"",
+                Verb = "runas",
+                UseShellExecute = true
+            };
+
+            try
+            {
+                Console.WriteLine($"{action}ing exclusion for: {currentDir}");
+                Process.Start(startInfo);
+                Console.WriteLine($"Success: {action} command sent to PowerShell.");
+            }
+            catch (Win32Exception)
+            {
+                Console.WriteLine("Error: User declined the administrator prompt.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An unexpected error occurred: {ex.Message}");
+            }
+        }
+
+
+        private static void RequestExclude()
+        {
+            MessageBoxResult result = MessageBox.Show("Error!",
+                "Microsoft Windows defender likely deleted the Flarial DLL\nAdd current folder to defender exclusions?",
+                MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes)
+            {
+                ManageFolderExclusion(true);
+            }
+        } 
     }
 }
