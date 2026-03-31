@@ -24,7 +24,8 @@
                        Panel.ZIndex="-1"
                        MouseLeftButtonDown="Rectangle_MouseLeftButtonDown"/>
             <!-- Background -->
-            <Image Source="/Assets/Images/background.png"
+            <Image x:Name="bg"
+                   Source="/Assets/Images/background.png"
                    VerticalAlignment="Stretch"
                    HorizontalAlignment="Stretch"
                    Stretch="Fill"
@@ -38,7 +39,7 @@
                 </Rectangle.Fill>
             </Rectangle>
         </Grid>
-        <!-- Title bar -->
+        <!-- Title bar grid -->
         <Grid Grid.Row="0">
             <!-- Window Controls -->
             <StackPanel Orientation="Horizontal" 

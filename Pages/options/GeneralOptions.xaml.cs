@@ -1,17 +1,10 @@
 ﻿using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Diagnostics;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
+using Flarial.Services;
 
 namespace Flarial.Pages.options
 {
@@ -23,9 +16,12 @@ namespace Flarial.Pages.options
         public GeneralOptions()
         {
             InitializeComponent();
-            LoadSettings();
+            Loaded += (_,_) => LoadSettings();
         }
 
+        /// <summary>
+        /// Load the settings as soon as the control is loaded.
+        /// </summary>
         private void LoadSettings()
         {
             // Load the settings for the DLL selection
@@ -38,7 +34,7 @@ namespace Flarial.Pages.options
                 SelectDLLCombo.SelectedIndex = 0;
                 CustomDLLPath?.IsEnabled = false;
                 Browse.IsEnabled = false;
-                CustomDLLPath?.Text = ClientHandler.DLLPath;
+                CustomDLLPath?.Text = FlarialHandler.DLLPath;
             }
             // Load the settings for the Launcher selection
             if (Properties.Settings.Default.CustomLauncher)
@@ -50,7 +46,7 @@ namespace Flarial.Pages.options
                 SelectLauncherCombo.SelectedIndex = 0;
                 CustomLauncherPath?.IsEnabled = false;
                 BrowseLauncher.IsEnabled = false;
-                CustomLauncherPath?.Text = ClientHandler.LauncherPath;
+                CustomLauncherPath?.Text = FlarialHandler.LauncherPath;
             }
         }
 
@@ -61,7 +57,7 @@ namespace Flarial.Pages.options
             {
                 CustomDLLPath?.IsEnabled = false;
                 Browse?.IsEnabled = false;
-                CustomDLLPath?.Text = ClientHandler.DLLPath;
+                CustomDLLPath?.Text = FlarialHandler.DLLPath;
                 Properties.Settings.Default.CustomDLL = false;
                 Properties.Settings.Default.Save();
             }
@@ -82,7 +78,7 @@ namespace Flarial.Pages.options
             {
                 CustomLauncherPath?.IsEnabled = false;
                 BrowseLauncher?.IsEnabled = false;
-                CustomLauncherPath?.Text = ClientHandler.LauncherPath;
+                CustomLauncherPath?.Text = FlarialHandler.LauncherPath;
                 Properties.Settings.Default.CustomLauncher = false;
                 Properties.Settings.Default.Save();
             }
@@ -170,6 +166,21 @@ namespace Flarial.Pages.options
             };
 
             _debounceTimerLauncher.Start();
+        }
+
+        private void Folder_Click(object sender, RoutedEventArgs e)
+        {
+            string FlarialPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Flarial");
+            Button? btn = (Button)sender;
+            switch (btn.Content.ToString())
+            {
+                case "Open Launcher folder":
+                    Process.Start("explorer.exe", Path.Combine(FlarialPath, "Launcher"));
+                    break;
+                case "Open Client folder":
+                    Process.Start("explorer.exe", Path.Combine(FlarialPath, "Client"));
+                    break;
+            }
         }
     }
 }

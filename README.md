@@ -9,7 +9,7 @@ Inspired by the older flarial launcher.
 
 ## How it works
 Underneath, This project simply uses the real flarial client and launcher.
-In [Clienthandler.StartGame()](/ClientHandler.cs) it runs:
+In [FlarialHandler.StartGame()](Services/FlarialHandler.cs) it runs:
 ```
 > flarial.exe --inject [DLL]
 ```
@@ -25,12 +25,10 @@ git clone https://github.com/yousif51811/FlarialReskin.git
 dotnet publish -c Release
 ```
 #### 4. An exe will be available at `\bin\Release\net10.0-windows\publish`
-<<<<<<< HEAD
 =======
 
 > [!WARNING]
 > **Windows Defender could flag the downloaded Flarial DLL/Launcher after download**
 > You might want to add the folder to your exclusion list in windows defender.
->>>>>>> 9667ae3a52c8963017369f4091328e5f6a3bf5f7
 --------------
 Made with ❤️ by yousif51811

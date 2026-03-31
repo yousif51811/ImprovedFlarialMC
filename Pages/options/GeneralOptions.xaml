@@ -26,14 +26,14 @@
                                       Style="{DynamicResource item}"
                                       x:Name="CustomO"/>
                     </ComboBox>
-                
+
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <TextBox Style="{DynamicResource TextBox}"
                                  x:Name="CustomDLLPath" 
                                  Margin="10,0,0,0" 
                                  VerticalAlignment="Center" 
-                                 Width="300"
+                                 Width="295"
                                  TextChanged="CustomDLLPath_TextChanged"/>
                     <Button Style="{DynamicResource Button}" 
                                 x:Name="Browse"
@@ -68,7 +68,7 @@
                              x:Name="CustomLauncherPath" 
                              Margin="10,0,0,0" 
                              VerticalAlignment="Center" 
-                             Width="300"
+                             Width="295"
                              TextChanged="CustomLauncherPath_TextChanged"/>
                     <Button Style="{DynamicResource Button}" 
                             x:Name="BrowseLauncher"
@@ -81,5 +81,22 @@
                 </StackPanel>
             </StackPanel>
         </StackPanel>
+        <!-- Folder Buttons -->
+        <Button Content="Open Client folder"
+                Style="{DynamicResource SecondaryButton}"
+                Height="30"
+                Width="150"
+                FontSize="12"
+                Background="#3D2E2A"
+                HorizontalAlignment="Right"
+                Click="Folder_Click"/>
+        <Button Content="Open Launcher folder"
+                Style="{DynamicResource SecondaryButton}"
+                Height="30"
+                Width="150"
+                FontSize="12"
+                Background="#3D2E2A"
+                HorizontalAlignment="Left"
+                Click="Folder_Click"/>
     </Grid>
 </UserControl>

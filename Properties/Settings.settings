@@ -14,5 +14,14 @@
     <Setting Name="CustomLauncher" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="BackgroundDir" Type="System.String" Scope="User">
+      <Value Profile="(Default)">pack://application:,,,/Assets/Images/background.png</Value>
+    </Setting>
+    <Setting Name="MainFont" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Comic Sans MS</Value>
+    </Setting>
+    <Setting Name="AnimationsEnabled" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

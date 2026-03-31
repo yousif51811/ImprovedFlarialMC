@@ -7,6 +7,8 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
+using Flarial.Services;
+using Flarial.Properties;
 
 namespace Flarial
 {
@@ -15,81 +17,116 @@ namespace Flarial
     /// </summary>
     public partial class MainWindow : Window
     {
+        enum LaunchState
+        {
+            Idle,
+            Updating,
+            Starting,
+            Failed
+        }
         // Options Page object
         private Options options = new Options();
         public MainWindow()
         {
             InitializeComponent();
-            GetTime();
+            GetTime(); // Set The greeting
             OptionsBorder.Child = options;
         }
-        /// <summary>
-        /// Window Controls Logic.
-        /// </summary>
+
+        
+        #region Window Controls
+        // Area for window controls (Dragging, minimzing, closing)
         private void Rectangle_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ButtonState == MouseButtonState.Pressed)
                 DragMove();
-            Console.WriteLine("Dragging window...");
         }
-
+        
         private void CloseBtn_Click(object sender, RoutedEventArgs e)
         {
-            Application.Current.Shutdown();
+            Application.Current.Shutdown(); // Shutdown the entire application
         }
 
         private void MinimizeBtn_Click(object sender, RoutedEventArgs e)
         {
             WindowState = WindowState.Minimized;
         }
+        #endregion
 
 
-
+        #region Launch Button
         /// <summary>
-        /// Launching the game.
+        /// Launch Button logic
         /// </summary>
         private async void LaunchBtn_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                LaunchBtn.IsEnabled = false;
-                LaunchContent.Text = "Updating";
-                LaunchIcon.Text = " ";
-                bool? update = await ClientHandler.CheckForUpdates();
+                // Check for updates
+                SetLaunchState(LaunchState.Updating, false);
+                bool? update = await FlarialHandler.CheckForUpdates();
                 if (update == false)
                 {
                     FailedLaunch();
                     return;
                 }
 
-                LaunchContent.Text = "Starting";
-                LaunchIcon.Text = " ";
-                if (!await ClientHandler.StartGame())
+                // Launch the game
+                SetLaunchState(LaunchState.Starting, false);
+                if (!await FlarialHandler.StartGame())
                 {
                     FailedLaunch();
                     return;
                 }
+
+                // Wait 2 seconds then go back to original state
                 await Task.Delay(2000);
-                LaunchContent.Text = "Launch";
-                LaunchBtn.IsEnabled = true;
+                SetLaunchState(LaunchState.Idle);
             }
             catch { FailedLaunch(); }
         }
+
+        /// <summary>
+        /// Simple function to set the LaunchState to failed and then back to idle after 2 seconds
+        /// </summary>
         private async void FailedLaunch()
         {
-            LaunchContent.Text = "Failed";
-            LaunchIcon.Text = " ";
-            await Task.Delay(2000).ContinueWith(_ =>
-            {
-                Dispatcher.Invoke(() =>
-                {
-                    LaunchContent.Text = "Launch";
-                    LaunchIcon.Text = " ";
-                    LaunchBtn.IsEnabled = true;
-                });
-            });
-            LaunchBtn.IsEnabled = true;
+            SetLaunchState(LaunchState.Failed, false);
+            await Task.Delay(2000);
+            SetLaunchState(LaunchState.Idle);
         }
+
+
+        /// <summary>
+        /// Set the launch buttons state and text based on the provided arguments (to avoid repetitive code in the launch method).
+        /// </summary>
+        /// <param name="state">LaunchState enum: The state of the button</param>
+        /// <param name="enable">(Default true) Wether or not to enable the Launch button</param>
+        private void SetLaunchState(LaunchState state, bool enable = true)
+        {
+            LaunchContent.Text = state switch
+            {
+                LaunchState.Idle => "Launch",
+                LaunchState.Updating => "Updating",
+                LaunchState.Starting => "Starting",
+                LaunchState.Failed => "Failed",
+                _ => "Launch"
+            };
+            LaunchIcon.Text = state switch
+            {
+                LaunchState.Idle => " ",
+                LaunchState.Updating => " ",
+                LaunchState.Starting => " ",
+                LaunchState.Failed => " ",
+                _ => " "
+            };
+            LaunchBtn.IsEnabled = enable;
+        }
+        #endregion
+
+
+
+
 
         /// <summary>
         /// Sets the greeting text based on the current time of day.
@@ -110,48 +147,72 @@ namespace Flarial
             }
         }
 
+
+
+
         /// <summary>
         /// opening or closing the options menu.
         /// </summary>
         /// <param name="open"> Wether to close or open the options. </param>
-        private async void ShowOptions(bool open = true)
+        public async void ShowOptions(bool open = true)
         {
-            Duration time = TimeSpan.FromSeconds(0.2);
-            if (open)
+            if (Settings.Default.AnimationsEnabled)
             {
-                DoubleAnimation OpenAnimation = new DoubleAnimation
+                Duration time = TimeSpan.FromSeconds(0.2);
+                if (open)
                 {
-                    To = 250,
-                    Duration = time,
-                    AccelerationRatio = 0.5,
-                };
-                OptionsBorder.BeginAnimation(HeightProperty, OpenAnimation);
-                DoubleAnimation FadeInDIm = new DoubleAnimation
+                    DoubleAnimation OpenAnimation = new DoubleAnimation
+                    {
+                        To = 275,
+                        Duration = time,
+                        AccelerationRatio = 0.5,
+                    };
+                    OptionsBorder.BeginAnimation(HeightProperty, OpenAnimation);
+                    DoubleAnimation FadeInDIm = new DoubleAnimation
+                    {
+                        To = 0.5,
+                        Duration = time,
+                    };
+                    dimwindow.BeginAnimation(OpacityProperty, FadeInDIm);
+                    dimwindow.IsHitTestVisible = true;
+                }
+                else
                 {
-                    To = 0.5,
-                    Duration = time,
-                };
-                dimwindow.BeginAnimation(OpacityProperty, FadeInDIm);
-                dimwindow.IsHitTestVisible = true;
+                    DoubleAnimation CloseAnimation = new DoubleAnimation
+                    {
+                        To = 0,
+                        Duration = time,
+                    };
+                    OptionsBorder.BeginAnimation(HeightProperty, CloseAnimation);
+                    DoubleAnimation FadeInDIm = new DoubleAnimation
+                    {
+                        To = 0,
+                        Duration = time,
+
+                    };
+                    dimwindow.BeginAnimation(OpacityProperty, FadeInDIm);
+                    dimwindow.IsHitTestVisible = false;
+                }
             }
             else
             {
-                DoubleAnimation CloseAnimation = new DoubleAnimation
+                Duration time = TimeSpan.FromSeconds(0.2);
+                if (open)
                 {
-                    To = 0,
-                    Duration = time,
-                };
-                OptionsBorder.BeginAnimation(HeightProperty, CloseAnimation);
-                DoubleAnimation FadeInDIm = new DoubleAnimation
+                    OptionsBorder.Height = 275;
+                    dimwindow.Opacity = 0.5;
+                    dimwindow.IsHitTestVisible = true;
+                }
+                else
                 {
-                    To = 0,
-                    Duration = time,
+                    OptionsBorder.BeginAnimation(HeightProperty, null);
+                    dimwindow.BeginAnimation(OpacityProperty, null);
 
-                };
-                dimwindow.BeginAnimation(OpacityProperty, FadeInDIm);
-                dimwindow.IsHitTestVisible = false;
+                    OptionsBorder.Height = 0;
+                    dimwindow.Opacity = 0;
+                    dimwindow.IsHitTestVisible = false;
+                }
             }
-            
         }
 
         private void SettingsBtn_Click(object sender, RoutedEventArgs e)

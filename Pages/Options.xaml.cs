@@ -22,10 +22,12 @@ namespace Flarial.Pages
     {
         public GeneralOptions general = new GeneralOptions();
         public AboutOptions about = new AboutOptions();
+        public AppearanceOptions appearance = new AppearanceOptions();
         public Options()
         {
             InitializeComponent();
             ContentArea.Content = general;
+            Loaded += (s,e) => appearance.LoadSettings();
         }
 
         /// <summary>
@@ -36,6 +38,7 @@ namespace Flarial.Pages
         {
             AboutBtn.IsActive = false;
             GeneralBtn.IsActive = false;
+            AppearanceBtn.IsActive = false;
             SidebarButton? btn = sender as SidebarButton;
             switch (btn?.Name)
             {
@@ -46,6 +49,10 @@ namespace Flarial.Pages
                 case "AboutBtn":
                     ContentArea.Content = about;
                     AboutBtn.IsActive = true;
+                    break;
+                case "AppearanceBtn":
+                    ContentArea.Content = appearance;
+                    AppearanceBtn.IsActive = true;
                     break;
             }
         }

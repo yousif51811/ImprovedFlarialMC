@@ -5,8 +5,69 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Flarial.Pages.options"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
+             d:DesignHeight="250" d:DesignWidth="375">
+    <ScrollViewer>
+        <StackPanel Orientation="Vertical" Margin="10">
+            <!-- Font chooser -->
+            <StackPanel Orientation="Horizontal" >
+                <Label Style="{DynamicResource Heading}" 
+                       Content="Font:"
+                       FontSize="16" Margin="0,0,10,0"/>
+                <ComboBox x:Name="SelectFontCombo"
+                          HorizontalAlignment="Left" 
+                          VerticalAlignment="Center"
+                          Width="200"
+                          IsTextSearchEnabled="True"
+                          SelectionChanged="SelectFontCombo_SelectionChanged"
+                          Style="{DynamicResource Combo}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Source}"
+                                       FontFamily="{Binding}" 
+                                       FontSize="16"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </StackPanel>
             
-    </Grid>
+            <!-- Toggle animations -->
+            <Grid>
+                <Grid HorizontalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Style="{DynamicResource Heading}" 
+                           Content="Animations Enabled:"
+                           FontSize="16" Margin="0,0,10,0"
+                           HorizontalAlignment="Left"/>
+                    <CheckBox x:Name="AnimationsCheck"
+                              Grid.Column="2"
+                              HorizontalAlignment="Right"
+                              VerticalAlignment="Center"
+                              Checked="Animations_Checked"
+                              Unchecked="Animations_Checked"/>
+                </Grid>
+            </Grid>
+
+            <!-- Background chooser -->
+            <StackPanel HorizontalAlignment="Stretch">
+                <Label Content="Background:" 
+                       Style="{DynamicResource Heading}"
+                       FontSize="16"
+                       HorizontalAlignment="Left"
+                       Margin="0,0,0,5"/>
+                
+                <!-- Backgrounds WrapPanel Abd ScrollViewer-->
+                <ScrollViewer VerticalScrollBarVisibility="Hidden"
+                              HorizontalScrollBarVisibility="Disabled"
+                              Height="140"
+                              HorizontalAlignment="Stretch">
+                    <WrapPanel Orientation="Horizontal"
+                               x:Name="BackgroundPanel"/>
+                </ScrollViewer>
+
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>

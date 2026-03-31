@@ -71,7 +71,7 @@ namespace Flarial.Controls
 
         private static void OnIsCustomEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var control = (SidebarButton)d;
+            SidebarButton control = (SidebarButton)d;
 
             bool value = (bool)e.NewValue;
 

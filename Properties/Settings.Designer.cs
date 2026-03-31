@@ -70,5 +70,41 @@ namespace Flarial.Properties {
                 this["CustomLauncher"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("pack://application:,,,/Assets/Images/background.png")]
+        public string BackgroundDir {
+            get {
+                return ((string)(this["BackgroundDir"]));
+            }
+            set {
+                this["BackgroundDir"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Comic Sans MS")]
+        public string MainFont {
+            get {
+                return ((string)(this["MainFont"]));
+            }
+            set {
+                this["MainFont"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AnimationsEnabled {
+            get {
+                return ((bool)(this["AnimationsEnabled"]));
+            }
+            set {
+                this["AnimationsEnabled"] = value;
+            }
+        }
     }
 }
