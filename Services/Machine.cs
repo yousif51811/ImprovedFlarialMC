@@ -1,17 +1,16 @@
 ﻿using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
+using System.Threading.Tasks;
 namespace Flarial.Services
 {
     public static class Machine
     {
         private static readonly HashAlgorithm _algorithm = SHA256.Create();
-        private static readonly object _lock = new();
+        private static readonly object _lock = new object();
         /// <summary>
         /// Get the local hash of a file
         /// </summary>
@@ -23,10 +22,13 @@ namespace Flarial.Services
             {
                 lock (_lock)
                 {
-                    using var stream = File.OpenRead(Path);
-                    var value = _algorithm.ComputeHash(stream);
-                    var @string = BitConverter.ToString(value);
-                    return @string.Replace("-", string.Empty);
+                    using (var stream = File.OpenRead(Path))
+                    {
+                        var value = _algorithm.ComputeHash(stream);
+                        var @string = BitConverter.ToString(value);
+                        return @string.Replace("-", string.Empty);
+                    }
+                    
                 }
             }
             catch { Logging.Log($"Couldn't retrieve hash of {Path}", "ERROR"); return string.Empty; }
@@ -55,7 +57,7 @@ namespace Flarial.Services
 
             // Log the process
             Logging.Log($"Excluding with command: {psCommand}", "DEBUG");
-            
+
             // Create the process
             ProcessStartInfo startInfo = new ProcessStartInfo
             {
@@ -65,7 +67,7 @@ namespace Flarial.Services
                 UseShellExecute = true
             };
 
-                Process.Start(startInfo);
+            Process.Start(startInfo);
         }
 
         /// <summary>
@@ -75,7 +77,7 @@ namespace Flarial.Services
         /// <returns>(Bool) Wether the path is excluded or not</returns>
         public static bool IsPathExcluded(string path)
         {
-            string[] registryKeys = 
+            string[] registryKeys =
             {
                 @"SOFTWARE\Microslop\Windows Defender\Exclusions\Paths",
                 @"SOFTWARE\Policies\Microslop\Windows Defender\Exclusions\Paths"
@@ -83,7 +85,7 @@ namespace Flarial.Services
 
             foreach (var keyPath in registryKeys)
             {
-                using (RegistryKey? key = Registry.LocalMachine.OpenSubKey(keyPath))
+                using (RegistryKey key = Registry.LocalMachine.OpenSubKey(keyPath))
                 {
                     if (key != null)
                     {

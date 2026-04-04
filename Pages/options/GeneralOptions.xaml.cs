@@ -1,10 +1,11 @@
-﻿using Microsoft.Win32;
+﻿using Flarial.Services;
+using Microsoft.Win32;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
-using Flarial.Services;
 
 namespace Flarial.Pages.options
 {
@@ -16,7 +17,7 @@ namespace Flarial.Pages.options
         public GeneralOptions()
         {
             InitializeComponent();
-            Loaded += (_,_) => LoadSettings();
+            Loaded += (sender, e) => LoadSettings();
         }
 
         /// <summary>
@@ -32,9 +33,9 @@ namespace Flarial.Pages.options
             else
             {
                 SelectDLLCombo.SelectedIndex = 0;
-                CustomDLLPath?.IsEnabled = false;
+                CustomDLLPath.IsEnabled = false;
                 Browse.IsEnabled = false;
-                CustomDLLPath?.Text = FlarialHandler.DLLPath;
+                CustomDLLPath.Text = FlarialHandler.DLLPath;
             }
             // Load the settings for the Launcher selection
             if (Properties.Settings.Default.CustomLauncher)
@@ -44,9 +45,9 @@ namespace Flarial.Pages.options
             else
             {
                 SelectLauncherCombo.SelectedIndex = 0;
-                CustomLauncherPath?.IsEnabled = false;
+                CustomLauncherPath.IsEnabled = false;
                 BrowseLauncher.IsEnabled = false;
-                CustomLauncherPath?.Text = FlarialHandler.LauncherPath;
+                CustomLauncherPath.Text = FlarialHandler.LauncherPath;
             }
         }
 
@@ -55,18 +56,18 @@ namespace Flarial.Pages.options
             // Default DLL selected
             if (SelectDLLCombo.SelectedIndex == 0)
             {
-                CustomDLLPath?.IsEnabled = false;
-                Browse?.IsEnabled = false;
-                CustomDLLPath?.Text = FlarialHandler.DLLPath;
+                CustomDLLPath.IsEnabled = false;
+                Browse.IsEnabled = false;
+                CustomDLLPath.Text = FlarialHandler.DLLPath;
                 Properties.Settings.Default.CustomDLL = false;
                 Properties.Settings.Default.Save();
             }
             // Custom DLL selected
             else if (SelectDLLCombo.SelectedIndex == 1)
             {
-                CustomDLLPath?.IsEnabled = true;
-                Browse?.IsEnabled = true;
-                CustomDLLPath?.Text = Properties.Settings.Default.DLLDir;
+                CustomDLLPath.IsEnabled = true;
+                Browse.IsEnabled = true;
+                CustomDLLPath.Text = Properties.Settings.Default.DLLDir;
                 Properties.Settings.Default.CustomDLL = true;
                 Properties.Settings.Default.Save();
             }
@@ -76,18 +77,18 @@ namespace Flarial.Pages.options
             // Default Launcher selected
             if (SelectLauncherCombo.SelectedIndex == 0)
             {
-                CustomLauncherPath?.IsEnabled = false;
-                BrowseLauncher?.IsEnabled = false;
-                CustomLauncherPath?.Text = FlarialHandler.LauncherPath;
+                CustomLauncherPath.IsEnabled = false;
+                BrowseLauncher.IsEnabled = false;
+                CustomLauncherPath.Text = FlarialHandler.LauncherPath;
                 Properties.Settings.Default.CustomLauncher = false;
                 Properties.Settings.Default.Save();
             }
             // Custom Launcher selected
             else if (SelectLauncherCombo.SelectedIndex == 1)
             {
-                CustomLauncherPath?.IsEnabled = true;
-                BrowseLauncher?.IsEnabled = true;
-                CustomLauncherPath?.Text = Properties.Settings.Default.LauncherDir;
+                CustomLauncherPath.IsEnabled = true;
+                BrowseLauncher.IsEnabled = true;
+                CustomLauncherPath.Text = Properties.Settings.Default.LauncherDir;
                 Properties.Settings.Default.CustomLauncher = true;
                 Properties.Settings.Default.Save();
             }
@@ -130,7 +131,7 @@ namespace Flarial.Pages.options
         /// Responsible for saving the custom path(s) with a debounce to prevent
         /// excessive writes to settings while the user is typing.
         /// </summary>
-        DispatcherTimer _debounceTimer = new();
+        DispatcherTimer _debounceTimer = new DispatcherTimer();
         private void CustomDLLPath_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (SelectDLLCombo.SelectedIndex == 0) { return; }
@@ -140,7 +141,7 @@ namespace Flarial.Pages.options
             {
                 Interval = TimeSpan.FromSeconds(1)
             };
-            _debounceTimer.Tick += (s, e) =>
+            _debounceTimer.Tick += (s, args) =>
             {
                 _debounceTimer.Stop();
                 Properties.Settings.Default.DLLDir = CustomDLLPath.Text;
@@ -149,7 +150,7 @@ namespace Flarial.Pages.options
 
             _debounceTimer.Start();
         }
-        DispatcherTimer _debounceTimerLauncher = new();
+        DispatcherTimer _debounceTimerLauncher = new DispatcherTimer();
         private void CustomLauncherPath_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (SelectLauncherCombo.SelectedIndex == 0) { return; }
@@ -158,7 +159,7 @@ namespace Flarial.Pages.options
             {
                 Interval = TimeSpan.FromSeconds(1)
             };
-            _debounceTimerLauncher.Tick += (s, e) =>
+            _debounceTimerLauncher.Tick += (s, args) =>
             {
                 _debounceTimerLauncher.Stop();
                 Properties.Settings.Default.DLLDir = CustomLauncherPath.Text;
@@ -171,7 +172,7 @@ namespace Flarial.Pages.options
         private void Folder_Click(object sender, RoutedEventArgs e)
         {
             string FlarialPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Flarial");
-            Button? btn = (Button)sender;
+            Button btn = (Button)sender;
             switch (btn.Content.ToString())
             {
                 case "Open Launcher folder":

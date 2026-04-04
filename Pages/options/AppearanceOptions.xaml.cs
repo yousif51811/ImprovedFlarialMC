@@ -1,11 +1,10 @@
 ﻿using Flarial.Properties;
-using Microsoft.Win32;
-using System.IO;
+using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Path = System.IO.Path;
 
 namespace Flarial.Pages.options
 {
@@ -25,7 +24,7 @@ namespace Flarial.Pages.options
             .OrderBy(f => f.Source);
             LoadSettings();
 
-            
+
         }
 
         /// <summary>
@@ -41,7 +40,7 @@ namespace Flarial.Pages.options
                 if (button.Tag as string == Settings.Default.BackgroundDir)
                 {
                     button.Opacity = 1;
-                    MainWindow? mainWindow = Application.Current.MainWindow as MainWindow;
+                    MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
                     if (mainWindow != null)
                     {
                         mainWindow.bg.Source = new BitmapImage(new Uri(Settings.Default.BackgroundDir, UriKind.Absolute));
@@ -60,7 +59,7 @@ namespace Flarial.Pages.options
             #region Font Loading
             // Load the font
             string fontName = Settings.Default.MainFont;
-            FontFamily? font = Fonts.SystemFontFamilies.FirstOrDefault(f => f.Source == fontName);
+            FontFamily font = Fonts.SystemFontFamilies.FirstOrDefault(f => f.Source == fontName);
             SaveFont(font ?? new FontFamily(fontName) ?? new FontFamily("Segoe UI"));
             SelectFontCombo.SelectedItem = font;
             #endregion

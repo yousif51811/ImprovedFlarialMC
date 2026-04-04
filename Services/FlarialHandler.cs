@@ -1,7 +1,9 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using System.Text.Json;
+using System.Threading.Tasks;
 using System.Windows;
 using Path = System.IO.Path;
 
@@ -40,7 +42,7 @@ namespace Flarial.Services
                     File.Delete(LauncherPath);
                 }
                 // Ensure directory exists
-                string directory = System.IO.Path.GetDirectoryName(LauncherPath)!;
+                string directory = System.IO.Path.GetDirectoryName(LauncherPath);
                 if (!Directory.Exists(directory))
                     Directory.CreateDirectory(directory);
 
@@ -61,7 +63,7 @@ namespace Flarial.Services
             }
             catch (Exception ex)
             {
-                Logging.Log($"Failed to download launcher: {ex.GetBaseException}", "ERROR");
+                Logging.Log($"Failed to download launcher: {ex}", "ERROR");
                 return false;
             }
             finally
@@ -69,7 +71,7 @@ namespace Flarial.Services
                 client.Dispose();
             }
         }
-            
+
 
 
 
@@ -96,7 +98,7 @@ namespace Flarial.Services
                     File.Delete(DLLPath);
                 }
                 // Ensure directory exists
-                string directory = Path.GetDirectoryName(DLLPath)!;
+                string directory = Path.GetDirectoryName(DLLPath);
                 if (!Directory.Exists(directory))
                     Directory.CreateDirectory(directory);
 
@@ -117,8 +119,8 @@ namespace Flarial.Services
             }
             catch (Exception ex)
             {
-                Logging.Log($"Failed to download DLL: {ex.GetBaseException}", "ERROR");
-                return false; 
+                Logging.Log($"Failed to download DLL: {ex}", "ERROR");
+                return false;
             }
             finally
             {
@@ -181,8 +183,12 @@ namespace Flarial.Services
                     // In order to make sure its on the latest version, if not, we download the new version.
                     Logging.Log("Launcher exists", "DEBUG");
                     string json = await client.GetStringAsync(LauncherVersion);
-                    using JsonDocument doc = JsonDocument.Parse(json);
-                    string? version = doc.RootElement.GetProperty("version").GetString();
+                    string version;
+                    using (JsonDocument doc = JsonDocument.Parse(json))
+                    {
+                        version = doc.RootElement.GetProperty("version").GetString();
+                    }
+
 
                     var info = FileVersionInfo.GetVersionInfo(LauncherPath);
                     if (info.FileVersion != version)
@@ -192,9 +198,9 @@ namespace Flarial.Services
                     }
                 }
                 catch (Exception ex)
-                { 
-                    Logging.Log($"Failed to check for launcher updates: {ex.GetBaseException}", "ERROR");
-                    return false; 
+                {
+                    Logging.Log($"Failed to check for launcher updates: {ex}", "ERROR");
+                    return false;
                 }
 
                 #endregion
@@ -225,8 +231,13 @@ namespace Flarial.Services
                         DllSuccess = success;
                     }
                     string json = await client.GetStringAsync(DLLHASHES);
-                    using JsonDocument doc = JsonDocument.Parse(json);
-                    string? hash = doc.RootElement.GetProperty("Release").GetString();
+
+                    string hash;
+                    using (JsonDocument doc = JsonDocument.Parse(json))
+                    {
+                        hash = doc.RootElement.GetProperty("Release").GetString();
+                    }
+
 
                     if (await Machine.GetFileHashAsync(DLLPath) != hash)
                     {
@@ -238,8 +249,8 @@ namespace Flarial.Services
                 }
                 catch (Exception ex)
                 {
-                    Logging.Log($"Failed to check for DLL updates: {ex.GetBaseException}", "ERROR");
-                    return false; 
+                    Logging.Log($"Failed to check for DLL updates: {ex}", "ERROR");
+                    return false;
                 }
                 #endregion
 
@@ -250,7 +261,7 @@ namespace Flarial.Services
             {
                 // Finally dispose of the client
                 client.Dispose();
-                
+
             }
         }
         #endregion
@@ -300,7 +311,7 @@ namespace Flarial.Services
             }
             catch (Exception ex)
             {
-                Logging.Log($"Failed to start the game: {ex.GetBaseException}", "ERROR");
+                Logging.Log($"Failed to start the game: {ex}", "ERROR");
                 return false;
             }
         }
@@ -320,7 +331,7 @@ namespace Flarial.Services
                 MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes)
             {
-                Machine.ManageFolderExclusion(AppDomain.CurrentDomain.BaseDirectory ,true);
+                Machine.ManageFolderExclusion(AppDomain.CurrentDomain.BaseDirectory, true);
             }
         }
     }

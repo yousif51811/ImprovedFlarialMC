@@ -493,3 +493,6 @@ CodeCoverage/
 # NUnit
 *.VisualState.xml
 TestResult.xml
+/Services/VersioningHandler.cs
+/Pages/options/VersionsOptions.xaml
+/Pages/options/VersionsOptions.xaml.cs

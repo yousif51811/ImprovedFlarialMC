@@ -1,12 +1,15 @@
 ﻿using Flarial.Properties;
+using Flarial.Services;
 using Microsoft.Win32;
+using System;
 using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Path = System.IO.Path;
-using Flarial.Services;
 
 namespace Flarial.Pages.options
 {
@@ -129,10 +132,10 @@ namespace Flarial.Pages.options
                 button.Opacity = 0.5;
             }
 
-            (sender as Button)?.Opacity = 1;
-            MainWindow? mainWindow = Application.Current.MainWindow as MainWindow;
+            (sender as Button).Opacity = 1;
+            MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
             if (mainWindow == null) return;
-            string? path = (sender as Button)?.Tag.ToString();
+            string path = (sender as Button)?.Tag.ToString();
             if (path == null) return;
 
             mainWindow.bg.Source = new BitmapImage(new Uri(path, UriKind.Absolute));
@@ -147,7 +150,7 @@ namespace Flarial.Pages.options
         /// </summary>
         /// <param name="path"> Path of image to delete </param>
         /// <param name="button"> Button to delete (Image container) </param>
-        private async void RemoveBackground(string path, Button? button)
+        private async void RemoveBackground(string path, Button button)
         {
             try
             {

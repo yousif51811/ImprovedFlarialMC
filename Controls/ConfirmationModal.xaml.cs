@@ -1,5 +1,5 @@
-﻿using System.Windows;
-
+﻿using System.Threading.Tasks;
+using System.Windows;
 namespace Flarial.Controls
 {
     /// <summary>
@@ -31,7 +31,7 @@ namespace Flarial.Controls
         }
         public static readonly DependencyProperty MessageProperty =
             DependencyProperty.Register(nameof(Message), typeof(string), typeof(ConfirmationModal), new PropertyMetadata("Stuff Go Here and lorem ipsum"));
-        
+
         private void CloseModal()
         {
             Container.Modal.IsOpen = false;

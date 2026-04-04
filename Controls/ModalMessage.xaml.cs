@@ -1,15 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Flarial.Controls
 {
@@ -54,9 +45,9 @@ namespace Flarial.Controls
         private async void Copy_Click(object sender, RoutedEventArgs e)
         {
             Clipboard.SetText(Message);
-            (sender as Button)?.Content = ""; // Check icon
+            (sender as Button).Content = ""; // Check icon
             await Task.Delay(2000);
-            (sender as Button)?.Content = ""; // Copy icon
+            (sender as Button).Content = ""; // Copy icon
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

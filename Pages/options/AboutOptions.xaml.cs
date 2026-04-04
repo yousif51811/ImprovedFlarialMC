@@ -1,19 +1,8 @@
 ﻿using Flarial.Services;
-using System;
-using System.CodeDom;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Security.Policy;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Flarial.Pages.options
 {
@@ -45,7 +34,7 @@ namespace Flarial.Pages.options
                 FileName = e.Uri.AbsoluteUri,
                 UseShellExecute = true
             });
-           Logging.Log($"Visiting {e.Uri.AbsoluteUri}...", "INFO");
+            Logging.Log($"Visiting {e.Uri.AbsoluteUri}...", "INFO");
         }
     }
 }

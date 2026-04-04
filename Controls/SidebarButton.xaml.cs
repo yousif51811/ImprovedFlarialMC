@@ -1,15 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Flarial.Controls
 {
@@ -77,7 +67,7 @@ namespace Flarial.Controls
 
             if (value)
             {
-                 control.MyBtn.Style = (Style)Application.Current.TryFindResource("EnabledTabButton");
+                control.MyBtn.Style = (Style)Application.Current.TryFindResource("EnabledTabButton");
             }
             else
             {
@@ -102,7 +92,7 @@ namespace Flarial.Controls
         /// <summary>
         /// Expose Click event of the internal button.
         /// </summary>
-        private RoutedEventHandler? _click;
+        private RoutedEventHandler _click;
         public event RoutedEventHandler Click
         {
             add { _click += value; }

@@ -1,16 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
+using System.Threading.Tasks;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Flarial.Controls
 {
@@ -20,9 +11,10 @@ namespace Flarial.Controls
     public partial class ModalContainer : UserControl
     {
         private bool isopen;
-        public bool IsOpen 
-        { get => isopen; 
-          set
+        public bool IsOpen
+        {
+            get => isopen;
+            set
             {
                 isopen = value;
                 if (value)
@@ -34,7 +26,7 @@ namespace Flarial.Controls
                     AnimateHide();
                 }
                 IsHitTestVisible = value;
-                (MainWindow.GetWindow(this) as MainWindow)?.dimwindow.Opacity = value ? 0.6 : 0;
+                (MainWindow.GetWindow(this) as MainWindow).dimwindow.Opacity = value ? 0.6 : 0;
             }
         }
 
@@ -43,7 +35,7 @@ namespace Flarial.Controls
         {
             InitializeComponent();
         }
-        
+
         /// <summary>
         /// Show a message modal.
         /// </summary>

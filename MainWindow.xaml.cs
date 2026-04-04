@@ -1,14 +1,11 @@
 ﻿using Flarial.Pages;
-using System.Diagnostics;
-using System.IO;
-using System.Net;
-using System.Net.Http;
+using Flarial.Properties;
+using Flarial.Services;
+using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
-using System.Windows.Shapes;
-using Flarial.Services;
-using Flarial.Properties;
 
 namespace Flarial
 {
@@ -34,7 +31,7 @@ namespace Flarial
             ModalArea.Content = Container.Modal;
         }
 
-        
+
         #region Window Controls
         // Area for window controls (Dragging, minimzing, closing)
         private void Rectangle_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -42,7 +39,7 @@ namespace Flarial
             if (e.ButtonState == MouseButtonState.Pressed)
                 DragMove();
         }
-        
+
         private void CloseBtn_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown(); // Shutdown the entire application
@@ -105,22 +102,31 @@ namespace Flarial
         /// <param name="enable">(Default true) Wether or not to enable the Launch button</param>
         private void SetLaunchState(LaunchState state, bool enable = true)
         {
-            LaunchContent.Text = state switch
+            switch (state)
             {
-                LaunchState.Idle => "Launch",
-                LaunchState.Updating => "Updating",
-                LaunchState.Starting => "Starting",
-                LaunchState.Failed => "Failed",
-                _ => "Launch"
-            };
-            LaunchIcon.Text = state switch
-            {
-                LaunchState.Idle => " ",
-                LaunchState.Updating => " ",
-                LaunchState.Starting => " ",
-                LaunchState.Failed => " ",
-                _ => " "
-            };
+
+                case LaunchState.Idle:
+                    LaunchIcon.Text = " ";
+                    LaunchContent.Text = "Launch";
+                    break;
+                case LaunchState.Updating:
+                    LaunchIcon.Text = " ";
+                    LaunchContent.Text = "Updating";
+                    break;
+                case LaunchState.Starting:
+                    LaunchIcon.Text = " ";
+                    LaunchContent.Text = "Starting";
+                    break;
+                case LaunchState.Failed:
+                    LaunchIcon.Text = " ";
+                    LaunchContent.Text = "Failed";
+                    break;
+                default:
+                    LaunchContent.Text = "Launch";
+                    LaunchIcon.Text = " ";
+                    break;
+            }
+            ;
             LaunchBtn.IsEnabled = enable;
         }
         #endregion
@@ -134,19 +140,21 @@ namespace Flarial
         /// </summary>
         private async void GetTime()
         {
-            switch (DateTime.Now.Hour) 
+            switch (DateTime.Now.Hour)
             {
-                case >= 5 and < 12:
+                case int h when (h >= 5 && h < 12):
                     GreetingMain.Text = "Good Morning!";
                     break;
-                case >= 12 and < 18:
+
+                case int h when (h >= 12 && h < 18):
                     GreetingMain.Text = "Good Afternoon!";
                     break;
+
                 default:
                     GreetingMain.Text = "Good Evening!";
                     break;
             }
-            Logging.Log(@$"Set greeting to: {GreetingMain.Text}", "INFO");
+            Logging.Log($"Set greeting to: {GreetingMain.Text}", "INFO");
         }
 
 
@@ -186,7 +194,7 @@ namespace Flarial
                     {
                         To = 0,
                         Duration = time,
-                        EasingFunction= ease,
+                        EasingFunction = ease,
                     };
                     OptionsBorder.BeginAnimation(HeightProperty, CloseAnimation);
                     DoubleAnimation FadeInDIm = new DoubleAnimation

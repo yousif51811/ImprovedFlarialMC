@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
 
 namespace Flarial.Services
 {
@@ -27,7 +25,7 @@ namespace Flarial.Services
 
             // Log the start of a new session
             Log("New Session Started", "START");
-            string? Version = FileVersionInfo
+            string Version = FileVersionInfo
                             .GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location)
                             .FileVersion;
             // Log version

@@ -1,17 +1,7 @@
 ﻿using Flarial.Controls;
 using Flarial.Pages.options;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Flarial.Pages
 {
@@ -23,11 +13,12 @@ namespace Flarial.Pages
         public GeneralOptions general = new GeneralOptions();
         public AboutOptions about = new AboutOptions();
         public AppearanceOptions appearance = new AppearanceOptions();
+        public VersionsOptions versions = new VersionsOptions();
         public Options()
         {
             InitializeComponent();
             ContentArea.Content = general;
-            Loaded += (s,e) => appearance.LoadSettings();
+            Loaded += (s, e) => appearance.LoadSettings();
         }
 
         /// <summary>
@@ -39,7 +30,8 @@ namespace Flarial.Pages
             AboutBtn.IsActive = false;
             GeneralBtn.IsActive = false;
             AppearanceBtn.IsActive = false;
-            SidebarButton? btn = sender as SidebarButton;
+            VersionsBtn.IsActive = false;
+            SidebarButton btn = sender as SidebarButton;
             switch (btn?.Name)
             {
                 case "GeneralBtn":
@@ -53,6 +45,10 @@ namespace Flarial.Pages
                 case "AppearanceBtn":
                     ContentArea.Content = appearance;
                     AppearanceBtn.IsActive = true;
+                    break;
+                case "VersionsBtn":
+                    ContentArea.Content = versions;
+                    VersionsBtn.IsActive = true;
                     break;
             }
         }
