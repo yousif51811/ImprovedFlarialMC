@@ -15,6 +15,7 @@ namespace Flarial.Services
         private const string LauncherURL = "https://cdn.flarial.xyz/launcher/Flarial.Launcher.exe";
         public const string LauncherPath = "./Assets/Launcher.exe";
         private const string LauncherVersion = "https://cdn.flarial.xyz/launcher/launcherVersion.txt";
+
         private const string DLLURL = "https://cdn.flarial.xyz/dll/latest.dll";
         public const string DLLPath = "./Assets/Flarial.dll";
         private const string DLLHASHES = "https://cdn.flarial.xyz/dll_hashes.json";
@@ -58,8 +59,9 @@ namespace Flarial.Services
                 }
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
+                Logging.Log($"Failed to download launcher: {ex.GetBaseException}", "ERROR");
                 return false;
             }
             finally
@@ -90,6 +92,7 @@ namespace Flarial.Services
                 // Delete existing DLL if it exists
                 if (File.Exists(DLLPath))
                 {
+                    Logging.Log("Existing DLL found, deleting...", "DEBUG");
                     File.Delete(DLLPath);
                 }
                 // Ensure directory exists
@@ -112,7 +115,11 @@ namespace Flarial.Services
                 }
                 return true;
             }
-            catch {  return false; }
+            catch (Exception ex)
+            {
+                Logging.Log($"Failed to download DLL: {ex.GetBaseException}", "ERROR");
+                return false; 
+            }
             finally
             {
                 // Dispose of the client.
@@ -140,8 +147,9 @@ namespace Flarial.Services
              */
             // Create an HTTPclient (we will later dispose of it)
             HttpClient client = new HttpClient();
+            bool launcherSuccess = false;
+            bool DllSuccess = false;
 
-            
             try
             {
                 #region Launcher Check
@@ -165,12 +173,13 @@ namespace Flarial.Services
                     // If the launcher doesn't exist, go ahead and download it
                     if (!File.Exists(LauncherPath))
                     {
+                        Logging.Log("Launcher not found, downloading...", "DEBUG");
                         bool success = await DownloadLauncher();
-                        return success;
-
+                        launcherSuccess = success;
                     }
                     // The launcher exists, Now we check the version of the local launcher against the version on the CDN
                     // In order to make sure its on the latest version, if not, we download the new version.
+                    Logging.Log("Launcher exists", "DEBUG");
                     string json = await client.GetStringAsync(LauncherVersion);
                     using JsonDocument doc = JsonDocument.Parse(json);
                     string? version = doc.RootElement.GetProperty("version").GetString();
@@ -179,10 +188,15 @@ namespace Flarial.Services
                     if (info.FileVersion != version)
                     {
                         bool success = await DownloadLauncher();
-                        return success;
+                        launcherSuccess = success;
                     }
                 }
-                catch { return false; }
+                catch (Exception ex)
+                { 
+                    Logging.Log($"Failed to check for launcher updates: {ex.GetBaseException}", "ERROR");
+                    return false; 
+                }
+
                 #endregion
 
 
@@ -208,7 +222,7 @@ namespace Flarial.Services
                     if (!File.Exists(DLLPath))
                     {
                         bool success = await DownloadDLL();
-                        return success;
+                        DllSuccess = success;
                     }
                     string json = await client.GetStringAsync(DLLHASHES);
                     using JsonDocument doc = JsonDocument.Parse(json);
@@ -216,19 +230,28 @@ namespace Flarial.Services
 
                     if (await Machine.GetFileHashAsync(DLLPath) != hash)
                     {
+                        Logging.Log("DLL hash mismatch, downloading new version...", "DEBUG");
                         bool success = await DownloadDLL();
-                        return success;
+                        Logging.Log($"DLL Downloaded Success: {success}", "DEBUG");
+                        DllSuccess = success;
                     }
                 }
-                catch { return false; }
+                catch (Exception ex)
+                {
+                    Logging.Log($"Failed to check for DLL updates: {ex.GetBaseException}", "ERROR");
+                    return false; 
+                }
                 #endregion
+
+                // Finally return whether both updates were successful or not
+                return launcherSuccess && DllSuccess;
             }
             finally
             {
                 // Finally dispose of the client
                 client.Dispose();
+                
             }
-            return false;
         }
         #endregion
 
@@ -275,8 +298,9 @@ namespace Flarial.Services
                 });
                 return true;
             }
-            catch { }
+            catch (Exception ex)
             {
+                Logging.Log($"Failed to start the game: {ex.GetBaseException}", "ERROR");
                 return false;
             }
         }

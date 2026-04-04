@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Flarial"
+        xmlns:control="clr-namespace:Flarial.Controls"
         mc:Ignorable="d" WindowStyle="None" ResizeMode="NoResize"
         Title="MainWindow" Height="350" Width="550">
     <WindowChrome.WindowChrome>
@@ -15,6 +16,16 @@
             <RowDefinition/>
             <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
+        <!-- Modal -->
+        <ContentControl x:Name="ModalArea"
+                        Grid.RowSpan="100"
+                        Grid.ColumnSpan="100"
+                        Panel.ZIndex="1000"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Width="250"
+                        Height="150"/>
+
         <Grid Grid.RowSpan="100">
             <!-- Drag Bar (Entire window) -->
             <Rectangle x:Name="DragBar" 
@@ -39,6 +50,7 @@
                 </Rectangle.Fill>
             </Rectangle>
         </Grid>
+        
         <!-- Title bar grid -->
         <Grid Grid.Row="0">
             <!-- Window Controls -->
@@ -153,5 +165,6 @@
                 Panel.ZIndex="97"
                 IsHitTestVisible="False"
                 MouseDown="dimwindow_MouseDown"/>
+
     </Grid>
 </Window>

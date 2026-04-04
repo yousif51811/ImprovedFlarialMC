@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
@@ -13,7 +15,7 @@ namespace Flarial.Services
         /// <summary>
         /// Get the local hash of a file
         /// </summary>
-        /// <param name="Path"> Fu</param>
+        /// <param name="Path"> Full path of the requested file. </param>
         /// <returns>(String) The hash of the file requested (Empty if failed)</returns>
         public static async Task<string> GetFileHashAsync(string Path) => await Task.Run(() =>
         {
@@ -27,7 +29,7 @@ namespace Flarial.Services
                     return @string.Replace("-", string.Empty);
                 }
             }
-            catch { return string.Empty; }
+            catch { Logging.Log($"Couldn't retrieve hash of {Path}", "ERROR"); return string.Empty; }
         });
 
 
@@ -51,6 +53,9 @@ namespace Flarial.Services
             // Create the command
             string psCommand = $"{action}-MpPreference -ExclusionPath '{Path}'";
 
+            // Log the process
+            Logging.Log($"Excluding with command: {psCommand}", "DEBUG");
+            
             // Create the process
             ProcessStartInfo startInfo = new ProcessStartInfo
             {
@@ -60,12 +65,37 @@ namespace Flarial.Services
                 UseShellExecute = true
             };
 
-            // Start the process, ignore exceptions.
-            try
-            {
                 Process.Start(startInfo);
+        }
+
+        /// <summary>
+        /// Check if provided path is excluded in windows defender.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns>(Bool) Wether the path is excluded or not</returns>
+        public static bool IsPathExcluded(string path)
+        {
+            string[] registryKeys = 
+            {
+                @"SOFTWARE\Microslop\Windows Defender\Exclusions\Paths",
+                @"SOFTWARE\Policies\Microslop\Windows Defender\Exclusions\Paths"
+            };
+
+            foreach (var keyPath in registryKeys)
+            {
+                using (RegistryKey? key = Registry.LocalMachine.OpenSubKey(keyPath))
+                {
+                    if (key != null)
+                    {
+                        // Defender stores paths as Value Names with a value of 0
+                        if (key.GetValueNames().Any(name => name.Equals(path, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            return true;
+                        }
+                    }
+                }
             }
-            catch { }
+            return false;
         }
     }
 }

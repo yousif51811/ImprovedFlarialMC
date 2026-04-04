@@ -31,6 +31,7 @@ namespace Flarial
             InitializeComponent();
             GetTime(); // Set The greeting
             OptionsBorder.Child = options;
+            ModalArea.Content = Container.Modal;
         }
 
         
@@ -145,6 +146,7 @@ namespace Flarial
                     GreetingMain.Text = "Good Evening!";
                     break;
             }
+            Logging.Log(@$"Set greeting to: {GreetingMain.Text}", "INFO");
         }
 
 
@@ -156,6 +158,7 @@ namespace Flarial
         /// <param name="open"> Wether to close or open the options. </param>
         public async void ShowOptions(bool open = true)
         {
+            CubicEase ease = new CubicEase { EasingMode = EasingMode.EaseInOut };
             if (Settings.Default.AnimationsEnabled)
             {
                 Duration time = TimeSpan.FromSeconds(0.2);
@@ -165,13 +168,14 @@ namespace Flarial
                     {
                         To = 275,
                         Duration = time,
-                        AccelerationRatio = 0.5,
+                        EasingFunction = ease,
                     };
                     OptionsBorder.BeginAnimation(HeightProperty, OpenAnimation);
                     DoubleAnimation FadeInDIm = new DoubleAnimation
                     {
                         To = 0.5,
                         Duration = time,
+                        EasingFunction = ease,
                     };
                     dimwindow.BeginAnimation(OpacityProperty, FadeInDIm);
                     dimwindow.IsHitTestVisible = true;
@@ -182,13 +186,14 @@ namespace Flarial
                     {
                         To = 0,
                         Duration = time,
+                        EasingFunction= ease,
                     };
                     OptionsBorder.BeginAnimation(HeightProperty, CloseAnimation);
                     DoubleAnimation FadeInDIm = new DoubleAnimation
                     {
                         To = 0,
                         Duration = time,
-
+                        EasingFunction = ease
                     };
                     dimwindow.BeginAnimation(OpacityProperty, FadeInDIm);
                     dimwindow.IsHitTestVisible = false;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Flarial.Services;
+using System;
 using System.CodeDom;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -34,7 +35,7 @@ namespace Flarial.Pages.options
         {
             // Open the GitHub URL in the default web browser
             Process.Start(new ProcessStartInfo(GitHubURL) { UseShellExecute = true });
-
+            Logging.Log($"Visiting Github...", "INFO");
         }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
@@ -44,6 +45,7 @@ namespace Flarial.Pages.options
                 FileName = e.Uri.AbsoluteUri,
                 UseShellExecute = true
             });
+           Logging.Log($"Visiting {e.Uri.AbsoluteUri}...", "INFO");
         }
     }
 }

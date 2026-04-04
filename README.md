@@ -25,7 +25,6 @@ git clone https://github.com/yousif51811/FlarialReskin.git
 dotnet publish -c Release
 ```
 #### 4. An exe will be available at `\bin\Release\net10.0-windows\publish`
-=======
 
 > [!WARNING]
 > **Windows Defender could flag the downloaded Flarial DLL/Launcher after download**

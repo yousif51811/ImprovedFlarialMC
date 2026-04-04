@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Flarial.Pages"
              xmlns:controls="clr-namespace:Flarial.Controls"
              mc:Ignorable="d" 
-             d:DesignHeight="250" d:DesignWidth="525">
+             d:DesignHeight="275" d:DesignWidth="525">
     <Border CornerRadius="15,15,0,0" Background="#211917" ClipToBounds="True">
         <Grid>
             <Grid.ColumnDefinitions>

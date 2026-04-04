@@ -1,0 +1,69 @@
+﻿<UserControl x:Class="Flarial.Controls.ConfirmationModal"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:Properties="clr-namespace:Flarial.Controls"
+             xmlns:local="clr-namespace:Flarial.Controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="150" d:DesignWidth="200">
+    <Border CornerRadius="20" ClipToBounds="True" Background="#1c1513">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="35"/>
+                <RowDefinition/>
+                <RowDefinition Height="40"/>
+            </Grid.RowDefinitions>
+
+            <!-- Title label -->
+            <Label Content="{Binding Title}"
+               Style="{DynamicResource Heading}"
+               FontSize="16"/>
+            <!-- Message textblock-->
+            <TextBlock Grid.Row="1"
+               Text="{Binding Message}"
+               FontSize="12"
+               FontWeight="Medium"
+               Margin="10"
+               TextWrapping="Wrap"
+               FontFamily="{DynamicResource MainFont}"
+               Foreground="White"/>
+            
+            <!-- Buttons -->
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Button x:Name="YesBtn"
+                        Content="Yes"
+                        Style="{DynamicResource PrimaryButton}"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="14"
+                        Padding="15,5"
+                        Click="YesBtn_Click"/>
+                <Button x:Name="NoBtn"
+                        Grid.Column="1"
+                        Content="No"
+                        Style="{DynamicResource PrimaryButton}"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="14"
+                        Padding="15,5"
+                        Click="NoBtn_Click"/>
+            </Grid>
+            
+            <!-- Copy button -->
+            <Button Grid.Row="1"
+                Style="{DynamicResource WindowControl}"
+                Content=""
+                VerticalAlignment="Bottom"
+                HorizontalAlignment="Right"
+                Margin="5"
+                Width="30"
+                FontSize="12"
+                Height="30"/>
+        </Grid>
+    </Border>
+</UserControl>
