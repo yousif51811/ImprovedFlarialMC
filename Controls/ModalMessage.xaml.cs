@@ -52,7 +52,7 @@ namespace Flarial.Controls
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Container.Modal.IsOpen = false;
+            UIContainer.Modal.IsOpen = false;
         }
     }
 }

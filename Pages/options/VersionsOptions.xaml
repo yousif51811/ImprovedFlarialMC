@@ -4,23 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Flarial.Pages.options"
+             xmlns:components="clr-namespace:Flarial.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <ListBox ItemsSource="{Binding versions}"
-                 MouseDoubleClick="ListBox_MouseDoubleClick"
-                 Background="Transparent"
-                 x:Name="VersionsListBox">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Border Padding="10" Margin="5">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding Name}" Foreground="White"/>
-                        </StackPanel>
-                    </Border>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-
+        <components:VersionList/>
     </Grid>
 </UserControl>

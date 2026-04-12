@@ -18,6 +18,7 @@
                 <StackPanel Margin="10">
                     <Label Content="Options" Style="{DynamicResource Heading}" Margin="0,0,0,20"/>
                     <controls:SidebarButton IsActive="True" Text="General" Icon=" " x:Name="GeneralBtn" Click="SidebarButton_Click"/>
+                    <controls:SidebarButton Text="Versions" Icon=" " x:Name="VersionsBtn" Click="SidebarButton_Click"/>
                     <controls:SidebarButton Text="Appearance" Icon=" " x:Name="AppearanceBtn" Click="SidebarButton_Click"/>
                     <controls:SidebarButton Text="About" Icon=" " x:Name="AboutBtn" Click="SidebarButton_Click"/>
                 </StackPanel>

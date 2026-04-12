@@ -7,6 +7,10 @@ using System.Security.Cryptography;
 using System.Threading.Tasks;
 namespace Flarial.Services
 {
+
+    /// <summary>
+    /// A generalized group of methods related to the machine.
+    /// </summary>
     public static class Machine
     {
         private static readonly HashAlgorithm _algorithm = SHA256.Create();

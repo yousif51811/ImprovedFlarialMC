@@ -11,10 +11,6 @@ namespace Flarial.Services
         /// </summary>
         private readonly static string logFilePath = System.IO.Path.Combine("logs", $"log_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.txt");
 
-        /// <summary>
-        /// Static constructor to ensure the logs directory exists before any logging occurs 
-        /// and log essential information.
-        /// </summary>
         static Logging()
         {
             // Ensure the logs directory exists and create a new log file for the session
@@ -34,6 +30,7 @@ namespace Flarial.Services
 
         public static void Log(string message, string level)
         {
+            // Format: [yyyy-mm-dd] LEVEL Message
             string logEntry = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] [{level.ToUpper()}] {message}";
             System.IO.File.AppendAllText(logFilePath, logEntry + Environment.NewLine);
         }

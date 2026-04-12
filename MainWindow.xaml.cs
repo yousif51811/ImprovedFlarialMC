@@ -28,7 +28,7 @@ namespace Flarial
             InitializeComponent();
             GetTime(); // Set The greeting
             OptionsBorder.Child = options;
-            ModalArea.Content = Container.Modal;
+            ModalArea.Content = UIContainer.Modal;
         }
 
 

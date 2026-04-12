@@ -32,8 +32,6 @@ namespace Flarial.Services
         /// </summary>
         private static async Task<bool> DownloadLauncher()
         {
-            // Create an HTTPclient (we will later dispose of it)
-            HttpClient client = new HttpClient();
             try
             {
                 // Delete existing launcher if it exists
@@ -46,7 +44,7 @@ namespace Flarial.Services
                 if (!Directory.Exists(directory))
                     Directory.CreateDirectory(directory);
 
-                var response = await client.GetAsync(LauncherURL);
+                var response = await Container.Client.GetAsync(LauncherURL);
                 response.EnsureSuccessStatusCode();
 
                 using (var fs = new FileStream(LauncherPath, FileMode.Create))
@@ -66,10 +64,6 @@ namespace Flarial.Services
                 Logging.Log($"Failed to download launcher: {ex}", "ERROR");
                 return false;
             }
-            finally
-            {
-                client.Dispose();
-            }
         }
 
 
@@ -87,8 +81,6 @@ namespace Flarial.Services
         /// </summary>
         private static async Task<bool> DownloadDLL()
         {
-            // Create an HTTPclient (we will later dispose of it)
-            HttpClient client = new HttpClient();
             try
             {
                 // Delete existing DLL if it exists
@@ -102,7 +94,7 @@ namespace Flarial.Services
                 if (!Directory.Exists(directory))
                     Directory.CreateDirectory(directory);
 
-                var response = await client.GetAsync(DLLURL);
+                var response = await Container.Client.GetAsync(DLLURL);
                 response.EnsureSuccessStatusCode();
 
                 using (var fs = new FileStream(DLLPath, FileMode.Create))
@@ -122,11 +114,6 @@ namespace Flarial.Services
                 Logging.Log($"Failed to download DLL: {ex}", "ERROR");
                 return false;
             }
-            finally
-            {
-                // Dispose of the client.
-                client.Dispose();
-            }
         }
 
 
@@ -143,126 +130,116 @@ namespace Flarial.Services
         public static async Task<bool> CheckForUpdates()
         {
             /*
-             * This part consists of 2 regions:
-             * - Launcher Check
-             * - DLL check
-             */
-            // Create an HTTPclient (we will later dispose of it)
-            HttpClient client = new HttpClient();
+            * This part consists of 2 regions:
+            * - Launcher Check
+            * - DLL check
+            */
+
             bool launcherSuccess = false;
             bool DllSuccess = false;
 
+            #region Launcher Check
             try
             {
-                #region Launcher Check
-                try
-                {
-                    /*
-                     * Get the launcher version from the flarial CDN and compare
-                     * wether it needs updating or not.
-                     */
-
-                    // If using a custom launcher, check if it exists.
-                    if (Properties.Settings.Default.CustomLauncher)
-                    {
-                        if (!File.Exists(Properties.Settings.Default.LauncherDir))
-                        {
-                            return false;
-                        }
-                        return true;
-                    }
-
-                    // If the launcher doesn't exist, go ahead and download it
-                    if (!File.Exists(LauncherPath))
-                    {
-                        Logging.Log("Launcher not found, downloading...", "DEBUG");
-                        bool success = await DownloadLauncher();
-                        launcherSuccess = success;
-                    }
-                    // The launcher exists, Now we check the version of the local launcher against the version on the CDN
-                    // In order to make sure its on the latest version, if not, we download the new version.
-                    Logging.Log("Launcher exists", "DEBUG");
-                    string json = await client.GetStringAsync(LauncherVersion);
-                    string version;
-                    using (JsonDocument doc = JsonDocument.Parse(json))
-                    {
-                        version = doc.RootElement.GetProperty("version").GetString();
-                    }
-
-
-                    var info = FileVersionInfo.GetVersionInfo(LauncherPath);
-                    if (info.FileVersion != version)
-                    {
-                        bool success = await DownloadLauncher();
-                        launcherSuccess = success;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Logging.Log($"Failed to check for launcher updates: {ex}", "ERROR");
-                    return false;
-                }
-
-                #endregion
-
-
-
-
-                #region DLL Check
                 /*
-                 * The dll doesnt have a version, so we get the hash of the 
-                 * local dll and compare it to the hash of the remote dll, 
-                 * if they dont match, we download the new dll.
-                 */
-                try
+                    * Get the launcher version from the flarial CDN and compare
+                    * wether it needs updating or not.
+                    */
+
+                // If using a custom launcher, check if it exists.
+                if (Properties.Settings.Default.CustomLauncher)
                 {
-                    if (Properties.Settings.Default.CustomDLL)
+                    if (!File.Exists(Properties.Settings.Default.LauncherDir))
                     {
-                        if (!File.Exists(Properties.Settings.Default.DLLDir))
-                        {
-                            return false;
-                        }
-                        return true;
+                        return false;
                     }
-
-                    if (!File.Exists(DLLPath))
-                    {
-                        bool success = await DownloadDLL();
-                        DllSuccess = success;
-                    }
-                    string json = await client.GetStringAsync(DLLHASHES);
-
-                    string hash;
-                    using (JsonDocument doc = JsonDocument.Parse(json))
-                    {
-                        hash = doc.RootElement.GetProperty("Release").GetString();
-                    }
-
-
-                    if (await Machine.GetFileHashAsync(DLLPath) != hash)
-                    {
-                        Logging.Log("DLL hash mismatch, downloading new version...", "DEBUG");
-                        bool success = await DownloadDLL();
-                        Logging.Log($"DLL Downloaded Success: {success}", "DEBUG");
-                        DllSuccess = success;
-                    }
+                    return true;
                 }
-                catch (Exception ex)
+
+                // If the launcher doesn't exist, go ahead and download it
+                if (!File.Exists(LauncherPath))
                 {
-                    Logging.Log($"Failed to check for DLL updates: {ex}", "ERROR");
-                    return false;
+                    Logging.Log("Launcher not found, downloading...", "DEBUG");
+                    bool success = await DownloadLauncher();
+                    launcherSuccess = success;
                 }
-                #endregion
+                // The launcher exists, Now we check the version of the local launcher against the version on the CDN
+                // In order to make sure its on the latest version, if not, we download the new version.
+                Logging.Log("Launcher exists", "DEBUG");
+                string json = await Container.Client.GetStringAsync(LauncherVersion);
+                string version;
+                using (JsonDocument doc = JsonDocument.Parse(json))
+                {
+                    version = doc.RootElement.GetProperty("version").GetString();
+                }
 
-                // Finally return whether both updates were successful or not
-                return launcherSuccess && DllSuccess;
+
+                var info = FileVersionInfo.GetVersionInfo(LauncherPath);
+                if (info.FileVersion != version)
+                {
+                    bool success = await DownloadLauncher();
+                    launcherSuccess = success;
+                }
             }
-            finally
+            catch (Exception ex)
             {
-                // Finally dispose of the client
-                client.Dispose();
-
+                Logging.Log($"Failed to check for launcher updates: {ex}", "ERROR");
+                return false;
             }
+
+            #endregion
+
+
+
+
+            #region DLL Check
+            /*
+                * The dll doesnt have a version, so we get the hash of the 
+                * local dll and compare it to the hash of the remote dll, 
+                * if they dont match, we download the new dll.
+                */
+            try
+            {
+                if (Properties.Settings.Default.CustomDLL)
+                {
+                    if (!File.Exists(Properties.Settings.Default.DLLDir))
+                    {
+                        return false;
+                    }
+                    return true;
+                }
+
+                if (!File.Exists(DLLPath))
+                {
+                    bool success = await DownloadDLL();
+                    DllSuccess = success;
+                }
+                string json = await Container.Client.GetStringAsync(DLLHASHES);
+
+                string hash;
+                using (JsonDocument doc = JsonDocument.Parse(json))
+                {
+                    hash = doc.RootElement.GetProperty("Release").GetString();
+                }
+
+
+                if (await Machine.GetFileHashAsync(DLLPath) != hash)
+                {
+                    Logging.Log("DLL hash mismatch, downloading new version...", "DEBUG");
+                    bool success = await DownloadDLL();
+                    Logging.Log($"DLL Downloaded Success: {success}", "DEBUG");
+                    DllSuccess = success;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logging.Log($"Failed to check for DLL updates: {ex}", "ERROR");
+                return false;
+            }
+            #endregion
+
+            // Finally return whether both updates were successful or not
+            return launcherSuccess && DllSuccess;
         }
         #endregion
 

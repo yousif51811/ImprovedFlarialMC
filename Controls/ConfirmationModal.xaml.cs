@@ -34,7 +34,7 @@ namespace Flarial.Controls
 
         private void CloseModal()
         {
-            Container.Modal.IsOpen = false;
+            UIContainer.Modal.IsOpen = false;
         }
 
         private void YesBtn_Click(object sender, RoutedEventArgs e)
